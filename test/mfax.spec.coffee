@@ -37,3 +37,30 @@ describe 'mfax', ->
                 </plurals>'
             actual = mfax.toXml 'LOGIN.HELPFUL_LINKS', 'There {links, plural, 1{is one helpful link} other{are {links} helpful links}} for you, {name}!'
             compareXml expected, actual, done
+
+        it 'should handle entire files', (done) ->
+            expected = '<?xml version="1.0" encoding="utf-8"?>
+                <resources>
+                    <string name="LOGIN.PREFERENCES">Login Preferences</string>
+                    <!-- The name used to login on the site -->
+                    <string name="LOGIN.USER">Username</string>
+                    <string name="LOGIN.PASSWORD">Password</string>
+                    <string name="LOGIN.PHOTO">Photo</string>
+                    <string name="LOGIN.VIDEO">Video</string>
+                    <string name="LINKS.CURRENTLYONLINE">There are currently {num} users online on the community {community}</string>
+                    <plurals name="LINKS.HELPFUL_LINKS">
+                        <item quantity="one">There is one helpful link for you, {name}!</item>
+                        <item quantity="other">There are {links} helpful links for you, {name}!</item>
+                    </plurals>
+                </resources>'
+            actual = mfax.toXml
+                LOGIN:
+                    PREFERENCES: 'Login Preferences'
+                    USER: 'Username'
+                    PASSWORD: 'Password'
+                    PHOTO: 'Photo'
+                    VIDEO: 'Video'
+                LINKS:
+                    CURRENTLYONLINE: 'There are currently {num} users online on the community {community}'
+                    HELPFUL_LINKS: 'There {links, plural, 1{is one helpful link} other{are {links} helpful links}} for you, {name}!'
+            compareXml expected, actual, done

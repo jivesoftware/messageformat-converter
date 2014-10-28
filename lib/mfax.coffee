@@ -1,6 +1,6 @@
 xml2js = require 'xml2js'
+xmlBuilder = require 'xmlBuilder'
 xmlParse = xml2js.Parser().parseString
-xmlBuilder = new xml2js.Builder()
 
 MessageFormat = require 'messageformat'
 mf = new MessageFormat 'en'
@@ -10,6 +10,7 @@ PLURAL_PLACEHOLDER = {}
 # Maps messageformat quantities to Android quantities
 QUANTITY_MAP =
     '1': 'one'
+    '0': 'zero'
     'other': 'other'
 
 module.exports = 
@@ -44,8 +45,9 @@ module.exports =
                             throw new Error 'Two plural statements present in string.'
                         this.plural = true
                         this.plurals = []
+                        this.eleName = 'plurals'
                         for pluralForm in leaf.elementFormat.val.pluralForms
-                            statement = new module.exports.Statement QUANTITY_MAP[pluralForm.key], pluralForm.val
+                            statement = new module.exports.Statement QUANTITY_MAP[pluralForm.key], pluralForm.val, 'item'
                             if statement.plural
                                 throw new Error 'Nested plural statements present in string.'
                             this.plurals.push statement
@@ -60,29 +62,23 @@ module.exports =
             return this.strParts.join ''
 
         toXml: ->
-            ret = {}
+            ele = null
             if this.plural
-                ret.plurals = {}
-                ret.plurals.$ = {name: this.key}
-                ret.plurals.item = []
+                ele = xmlBuilder.create 'plurals'
+                ele.att 'name', this.key
                 for pluralStatement in this.plurals
-                    item = {}
-                    ret.plurals.item.push item
-                    item.$ = {quantity: pluralStatement.key}
-                    item._ = ''
+                    str = ''
                     for part in this.strParts
                         if part is PLURAL_PLACEHOLDER
-                            item._ += pluralStatement.toString()
+                            str += pluralStatement.toString()
                         else
-                            item._ += part
+                            str += part
+                    ele.ele 'item', {quantity: pluralStatement.key}, str
             else
-                ret.string = {}
-                ret.string.$ = {name: this.key}
-                ret.string._ = this.toString()
-            return xmlBuilder.buildObject ret
-
-
-
+                ele = xmlBuilder.create 'string'
+                ele.att 'name', this.key
+                ele.txt this.toString()
+            return ele
 
     _mfStringToXml: (key, formatStr) ->
         try
@@ -90,14 +86,32 @@ module.exports =
         catch e
             throw new Error 'Hmm, this appears to not be a messageFormat string:', formatStr
         statement = new this.Statement key, parsed.program
-        return statement.toXml()
+        return statement.toXml().toString({ pretty: true, indent: '  ', offset: 1, newline: '\n' })
+
+    _recursiveFlatten: (obj, base = []) ->
+        ret = {}
+        for key, value of obj
+            if typeof value is 'object'
+                ret[k] = v for k, v of this._recursiveFlatten value, base.concat [key]
+            else
+                newKey = (base.concat [key]).join '.'
+                ret[newKey] = value
+        return ret
 
     _mfObjectToXml: (obj) ->
-
+        flattened = this._recursiveFlatten obj
+        root = xmlBuilder.create 'resources'
+        for key, value of flattened
+            try
+                parsed = mf.parse value
+            catch e
+                throw new Error 'Hmm, this appears to not be a messageFormat string:', formatStr
+            statement = new this.Statement key, parsed.program
+            root.importXMLBuilder statement.toXml()
+        return root.toString({ pretty: true, indent: '  ', offset: 1, newline: '\n' })
 
     toXml: (key, formatStr) ->
         if typeof key is 'string'
             return this._mfStringToXml key, formatStr
         else
-
-
+            return this._mfObjectToXml key
