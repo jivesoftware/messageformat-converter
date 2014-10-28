@@ -1,1 +1,31 @@
-This thing will convert messageFormat files to Android XML, suitable for uploading to Transifex.
+
+messageformat-xml
+=================
+
+Hi! My name is messageformat-xml. I handle conversion of
+[messageformat](https://github.com/SlexAxton/messageformat.js)-formatted strings to and from
+[Android XML](http://developer.android.com/guide/topics/resources/string-resource.html) files,
+suitable for integrating with services like [Transifex](https://www.transifex.com/).
+
+Currently I only support a relatively small subset of messageformat -- just the pluralization
+syntax.
+
+Usage
+-----
+TODO
+
+License
+-------
+
+Copyright (c) 2014, RealPage Inc.
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee
+is hereby granted, provided that the above copyright notice and this permission notice appear in all
+copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
+OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+SOFTWARE.

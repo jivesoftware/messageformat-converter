@@ -1,5 +1,5 @@
 {
-  "name": "mfax",
+  "name": "messageformat-xml",
   "version": "0.0.0",
   "description": "MessageFormat <--> Android XML",
   "main": "lib/mfax.coffee",
@@ -8,7 +8,7 @@
   },
   "keywords": [
     "messageformat",
-    "Android XML"
+    "Android-XML"
   ],
   "author": "Eli Mallon",
   "license": "ISC",
