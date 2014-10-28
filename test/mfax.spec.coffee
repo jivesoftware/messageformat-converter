@@ -42,7 +42,6 @@ describe 'mfax', ->
             expected = '<?xml version="1.0" encoding="utf-8"?>
                 <resources>
                     <string name="LOGIN.PREFERENCES">Login Preferences</string>
-                    <!-- The name used to login on the site -->
                     <string name="LOGIN.USER">Username</string>
                     <string name="LOGIN.PASSWORD">Password</string>
                     <string name="LOGIN.PHOTO">Photo</string>
@@ -64,3 +63,71 @@ describe 'mfax', ->
                     CURRENTLYONLINE: 'There are currently {num} users online on the community {community}'
                     HELPFUL_LINKS: 'There {links, plural, 1{is one helpful link} other{are {links} helpful links}} for you, {name}!'
             compareXml expected, actual, done
+
+    describe 'toMessageFormat', ->
+        it 'should handle de-XMLing one string', ->
+            expected =
+                LOGIN:
+                    USER: 'Username'
+            actual = mfax.toMessageFormat '<string name="LOGIN.USER">Username</string>'
+            expect(actual).toEqual(expected)
+
+        it 'should handle de-XMLing an entire file', ->
+            expected =
+                LOGIN:
+                    PREFERENCES: 'Login Preferences'
+                    USER: 'Username'
+                    PASSWORD: 'Password'
+                    PHOTO: 'Photo'
+                    VIDEO: 'Video'
+                LINKS:
+                    CURRENTLYONLINE: 'There are currently {num} users online on the community {community}'
+                    HELPFUL_LINKS: '{links, plural, 1{There is one helpful link for you, {name}!} other{There are {links} helpful links for you, {name}!}}'
+            actual = mfax.toMessageFormat '<?xml version="1.0" encoding="utf-8"?>
+                <resources>
+                    <string name="LOGIN.PREFERENCES">Login Preferences</string>
+                    <string name="LOGIN.USER">Username</string>
+                    <string name="LOGIN.PASSWORD">Password</string>
+                    <string name="LOGIN.PHOTO">Photo</string>
+                    <string name="LOGIN.VIDEO">Video</string>
+                    <string name="LINKS.CURRENTLYONLINE">There are currently {num} users online on the community {community}</string>
+                    <plurals messageformat:pluralkey="links" name="LINKS.HELPFUL_LINKS">
+                        <item quantity="one">There is one helpful link for you, {name}!</item>
+                        <item quantity="other">There are {links} helpful links for you, {name}!</item>
+                    </plurals>
+                </resources>'
+            expect(actual).toEqual(expected)
+
+    describe 'back and forth', ->
+        it 'should handle messageFormat --> XML --> messageFormat', ->
+            messageFormat =
+                LOGIN:
+                    PREFERENCES: 'Login Preferences'
+                    USER: 'Username'
+                    PASSWORD: 'Password'
+                    PHOTO: 'Photo'
+                    VIDEO: 'Video'
+                LINKS:
+                    CURRENTLYONLINE: 'There are currently {num} users online on the community {community}'
+                    HELPFUL_LINKS: '{links, plural, 1{There is one helpful link for you, {name}!} other{There are {links} helpful links for you, {name}!}}'
+            xml = mfax.toXml messageFormat
+            result = mfax.toMessageFormat xml
+            expect(result).toEqual(messageFormat)
+
+        it 'should handle XML --> messageFormat --> XML', (done) ->
+            xml = '<?xml version="1.0" encoding="utf-8"?>
+                <resources>
+                    <string name="LOGIN.PREFERENCES">Login Preferences</string>
+                    <string name="LOGIN.USER">Username</string>
+                    <string name="LOGIN.PASSWORD">Password</string>
+                    <string name="LOGIN.PHOTO">Photo</string>
+                    <string name="LOGIN.VIDEO">Video</string>
+                    <string name="LINKS.CURRENTLYONLINE">There are currently {num} users online on the community {community}</string>
+                    <plurals messageformat:pluralkey="links" name="LINKS.HELPFUL_LINKS">
+                        <item quantity="one">There is one helpful link for you, {name}!</item>
+                        <item quantity="other">There are {links} helpful links for you, {name}!</item>
+                    </plurals>
+                </resources>'
+            messageFormat = mfax.toMessageFormat xml
+            result = mfax.toXml messageFormat
+            compareXml xml, result, done
