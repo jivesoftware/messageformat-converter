@@ -26,7 +26,7 @@ module.exports =
                 catch e
                     throw new Error 'Hmm, this appears to not be a messageFormat string:', formatStr
             this.key = key
-            this.plural = false
+            this.pluralKey = null
 
             # First thing -- messageformat parses into a nested pattern tree for optimization purposes.
             # We only care about the leafs of that, so let's go ahead and traverse that tree.
@@ -49,11 +49,10 @@ module.exports =
                     if leaf.elementFormat?
                         unless leaf.elementFormat.key is 'plural'
                             throw new Error 'Unsupported format type: ' + leaf.elementFormat.key 
-                        if this.plural is true
+                        if this.pluralKey?
                             throw new Error 'Two plural statements present in string.'
-                        this.plural = true
+                        this.pluralKey = leaf.argumentIndex
                         this.plurals = []
-                        this.eleName = 'plurals'
                         for pluralForm in leaf.elementFormat.val.pluralForms
                             statement = new module.exports.Statement QUANTITY_MAP[pluralForm.key], pluralForm.val, 'item'
                             if statement.plural
@@ -71,8 +70,9 @@ module.exports =
 
         toXml: ->
             ele = null
-            if this.plural
+            if this.pluralKey?
                 ele = xmlBuilder.create 'plurals'
+                ele.att 'messageformat:pluralkey', this.pluralKey
                 ele.att 'name', this.key
                 for pluralStatement in this.plurals
                     str = ''

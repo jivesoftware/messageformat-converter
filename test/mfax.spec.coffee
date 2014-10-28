@@ -23,7 +23,7 @@ describe 'mfax', ->
             compareXml expected, actual, done
 
         it 'should handle plural strings', (done) ->
-            expected = '<plurals name="LOGIN.HELPFUL_LINKS">
+            expected = '<plurals messageformat:pluralkey="links" name="LOGIN.HELPFUL_LINKS">
                 <item quantity="one">{links} Helpful Link</item>
                 <item quantity="other">{links} Helpful Links</item>
             </plurals>'
@@ -31,7 +31,7 @@ describe 'mfax', ->
             compareXml expected, actual, done
 
         it 'should handle complicated plural strings', (done) ->
-            expected = '<plurals name="LOGIN.HELPFUL_LINKS">
+            expected = '<plurals messageformat:pluralkey="links" name="LOGIN.HELPFUL_LINKS">
                 <item quantity="one">There is one helpful link for you, {name}!</item>
                 <item quantity="other">There are {links} helpful links for you, {name}!</item>
                 </plurals>'
@@ -48,7 +48,7 @@ describe 'mfax', ->
                     <string name="LOGIN.PHOTO">Photo</string>
                     <string name="LOGIN.VIDEO">Video</string>
                     <string name="LINKS.CURRENTLYONLINE">There are currently {num} users online on the community {community}</string>
-                    <plurals name="LINKS.HELPFUL_LINKS">
+                    <plurals messageformat:pluralkey="links" name="LINKS.HELPFUL_LINKS">
                         <item quantity="one">There is one helpful link for you, {name}!</item>
                         <item quantity="other">There are {links} helpful links for you, {name}!</item>
                     </plurals>
