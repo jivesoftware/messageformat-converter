@@ -1,5 +1,6 @@
 xml2js = require 'xml2js'
 xmlParse = xml2js.Parser().parseString
+xmlBuilder = new xml2js.Builder()
 
 MessageFormat = require 'messageformat'
 mf = new MessageFormat 'en'
@@ -59,33 +60,44 @@ module.exports =
             return this.strParts.join ''
 
         toXml: ->
-            ret = ''
+            ret = {}
             if this.plural
-                ret += '<plurals name="' + this.key + '">'
+                ret.plurals = {}
+                ret.plurals.$ = {name: this.key}
+                ret.plurals.item = []
                 for pluralStatement in this.plurals
-                    ret += '<item quantity="' + pluralStatement.key + '">'
+                    item = {}
+                    ret.plurals.item.push item
+                    item.$ = {quantity: pluralStatement.key}
+                    item._ = ''
                     for part in this.strParts
                         if part is PLURAL_PLACEHOLDER
-                            ret += pluralStatement.toString()
+                            item._ += pluralStatement.toString()
                         else
-                            ret += part
-                    ret += '</item>'
-                ret += '</plurals>'
+                            item._ += part
             else
-                ret += '<string name="' + this.key + '">'
-                ret += this.toString()
-                ret += '</string>'
-            return ret
+                ret.string = {}
+                ret.string.$ = {name: this.key}
+                ret.string._ = this.toString()
+            return xmlBuilder.buildObject ret
 
 
 
 
-    toXml: (key, formatStr) ->
+    _mfStringToXml: (key, formatStr) ->
         try
             parsed = mf.parse formatStr
         catch e
             throw new Error 'Hmm, this appears to not be a messageFormat string:', formatStr
         statement = new this.Statement key, parsed.program
         return statement.toXml()
+
+    _mfObjectToXml: (obj) ->
+
+
+    toXml: (key, formatStr) ->
+        if typeof key is 'string'
+            return this._mfStringToXml key, formatStr
+        else
 
 
