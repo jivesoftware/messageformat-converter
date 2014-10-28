@@ -16,7 +16,15 @@ QUANTITY_MAP =
 module.exports = 
 
     Statement: class
+
+        # rootNode can either be a "statements" having node of a messageFormat tree or a raw messageFormat string
         constructor: (key, rootNode) ->
+            if typeof rootNode is 'string'
+                try
+                    parsed = mf.parse rootNode
+                    rootNode = parsed.program
+                catch e
+                    throw new Error 'Hmm, this appears to not be a messageFormat string:', formatStr
             this.key = key
             this.plural = false
 
@@ -81,13 +89,10 @@ module.exports =
             return ele
 
     _mfStringToXml: (key, formatStr) ->
-        try
-            parsed = mf.parse formatStr
-        catch e
-            throw new Error 'Hmm, this appears to not be a messageFormat string:', formatStr
-        statement = new this.Statement key, parsed.program
+        statement = new this.Statement key, formatStr
         return statement.toXml().toString({ pretty: true, indent: '  ', offset: 1, newline: '\n' })
 
+    # Helper to turn {"FOO": {"BAR": "Eli", "BAZ": "Mallon"}} into {"FOO.BAR": "Eli", "FOO.BAZ": "Mallon"}
     _recursiveFlatten: (obj, base = []) ->
         ret = {}
         for key, value of obj
@@ -102,11 +107,7 @@ module.exports =
         flattened = this._recursiveFlatten obj
         root = xmlBuilder.create 'resources'
         for key, value of flattened
-            try
-                parsed = mf.parse value
-            catch e
-                throw new Error 'Hmm, this appears to not be a messageFormat string:', formatStr
-            statement = new this.Statement key, parsed.program
+            statement = new this.Statement key, value
             root.importXMLBuilder statement.toXml()
         return root.toString({ pretty: true, indent: '  ', offset: 1, newline: '\n' })
 
