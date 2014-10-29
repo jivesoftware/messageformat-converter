@@ -4,7 +4,7 @@
   "description": "MessageFormat <--> Android XML",
   "main": "lib/mfax.coffee",
   "scripts": {
-    "test": "jasmine-node --coffee ."
+    "test": "node_modules/.bin/jasmine-node --coffee ."
   },
   "keywords": [
     "messageformat",
@@ -16,5 +16,8 @@
     "messageformat": "~0.2.1",
     "xml2js": "~0.4.4",
     "xmlbuilder": "~2.4.4"
+  },
+  "devDependencies": {
+    "jasmine-node": "~1.14.5"
   }
 }
