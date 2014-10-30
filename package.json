@@ -1,5 +1,5 @@
 {
-  "name": "messageformat-xml",
+  "name": "messageformat-converter",
   "version": "0.0.0",
   "description": "MessageFormat <--> Android XML",
   "main": "lib/mfax.coffee",

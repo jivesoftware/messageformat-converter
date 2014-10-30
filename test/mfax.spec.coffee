@@ -1,5 +1,5 @@
 
-mfax = require '../lib/mfax'
+mfconv = require '../lib/messageformat-converter'
 
 # Simple way to see if two XML strings are equivelent: pipe through xml2js then use jasmine's .isEqual.
 xmlParse = (require 'xml2js').Parser().parseString
@@ -11,15 +11,15 @@ compareXml = (expectedStr, actualStr, done) ->
             expect(actual).toEqual(expected)
             done()
 
-describe 'mfax', ->
+describe 'mfconv', ->
 
     it 'should exist', ->
-        expect(mfax).not.toBeNull()
+        expect(mfconv).not.toBeNull()
 
     describe 'toXml', ->
         it 'should handle basic strings', (done) ->
             expected = '<string name="LOGIN.PHOTO">Photo</string>'
-            actual = mfax.toXml 'LOGIN.PHOTO', 'Photo'
+            actual = mfconv.toXml 'LOGIN.PHOTO', 'Photo'
             compareXml expected, actual, done
 
         it 'should handle plural strings', (done) ->
@@ -27,7 +27,7 @@ describe 'mfax', ->
                 <item quantity="one">{links} Helpful Link</item>
                 <item quantity="other">{links} Helpful Links</item>
             </plurals>'
-            actual = mfax.toXml 'LOGIN.HELPFUL_LINKS', '{links} Helpful {links, plural, 1{Link} other{Links}}'
+            actual = mfconv.toXml 'LOGIN.HELPFUL_LINKS', '{links} Helpful {links, plural, 1{Link} other{Links}}'
             compareXml expected, actual, done
 
         it 'should handle complicated plural strings', (done) ->
@@ -35,7 +35,7 @@ describe 'mfax', ->
                 <item quantity="one">There is one helpful link for you, {name}!</item>
                 <item quantity="other">There are {links} helpful links for you, {name}!</item>
                 </plurals>'
-            actual = mfax.toXml 'LOGIN.HELPFUL_LINKS', 'There {links, plural, 1{is one helpful link} other{are {links} helpful links}} for you, {name}!'
+            actual = mfconv.toXml 'LOGIN.HELPFUL_LINKS', 'There {links, plural, 1{is one helpful link} other{are {links} helpful links}} for you, {name}!'
             compareXml expected, actual, done
 
         it 'should handle entire files', (done) ->
@@ -52,7 +52,7 @@ describe 'mfax', ->
                         <item quantity="other">There are {links} helpful links for you, {name}!</item>
                     </plurals>
                 </resources>'
-            actual = mfax.toXml
+            actual = mfconv.toXml
                 LOGIN:
                     PREFERENCES: 'Login Preferences'
                     USER: 'Username'
@@ -69,7 +69,7 @@ describe 'mfax', ->
             expected =
                 LOGIN:
                     USER: 'Username'
-            actual = mfax.toMessageFormat '<string name="LOGIN.USER">Username</string>'
+            actual = mfconv.toMessageFormat '<string name="LOGIN.USER">Username</string>'
             expect(actual).toEqual(expected)
 
         it 'should handle de-XMLing an entire file', ->
@@ -83,7 +83,7 @@ describe 'mfax', ->
                 LINKS:
                     CURRENTLYONLINE: 'There are currently {num} users online on the community {community}'
                     HELPFUL_LINKS: '{links, plural, 1{There is one helpful link for you, {name}!} other{There are {links} helpful links for you, {name}!}}'
-            actual = mfax.toMessageFormat '<?xml version="1.0" encoding="utf-8"?>
+            actual = mfconv.toMessageFormat '<?xml version="1.0" encoding="utf-8"?>
                 <resources>
                     <string name="LOGIN.PREFERENCES">Login Preferences</string>
                     <string name="LOGIN.USER">Username</string>
@@ -110,8 +110,8 @@ describe 'mfax', ->
                 LINKS:
                     CURRENTLYONLINE: 'There are currently {num} users online on the community {community}'
                     HELPFUL_LINKS: '{links, plural, 1{There is one helpful link for you, {name}!} other{There are {links} helpful links for you, {name}!}}'
-            xml = mfax.toXml messageFormat
-            result = mfax.toMessageFormat xml
+            xml = mfconv.toXml messageFormat
+            result = mfconv.toMessageFormat xml
             expect(result).toEqual(messageFormat)
 
         it 'should handle XML --> messageFormat --> XML', (done) ->
@@ -128,6 +128,6 @@ describe 'mfax', ->
                         <item quantity="other">There are {links} helpful links for you, {name}!</item>
                     </plurals>
                 </resources>'
-            messageFormat = mfax.toMessageFormat xml
-            result = mfax.toXml messageFormat
+            messageFormat = mfconv.toMessageFormat xml
+            result = mfconv.toXml messageFormat
             compareXml xml, result, done
