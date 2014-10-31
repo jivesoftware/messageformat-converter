@@ -26,7 +26,7 @@ module.exports = mfconv =
         from: (format) ->
             unless mfconv.formatters[format]
                 throw new Error "Unknown format: #{format}"
-            return mfconv.formatters[format].in this.startingData
+            return mfconv.formatters[format].stringIn this.startingData
 
     # In a gross oversimplification of messageFormat, `ConversionString`s are comprised of lists of
     # different kinds of "bits"

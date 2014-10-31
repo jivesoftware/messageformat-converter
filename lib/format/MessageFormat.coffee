@@ -6,7 +6,7 @@ module.exports = MessageFormatFormatter =
 
     # MessageFormat comes to us with keys and strings separate from each other, so this function
     # takes a [key, str] tuple.
-    in: ([key, str]) ->
+    stringIn: ([key, str]) ->
         mfconv = require '../messageformat-converter'
         output = new mfconv.ConversionString key
 
@@ -53,12 +53,12 @@ module.exports = MessageFormatFormatter =
                     pluralBit = new mfconv.PluralBit leaf.argumentIndex
                     output.bits.push pluralBit
                     for pluralForm in leaf.elementFormat.val.pluralForms
-                        pluralBit.addMapping MessageFormatFormatter.in [pluralForm.key, pluralForm.val]
+                        pluralBit.addMapping MessageFormatFormatter.stringIn [pluralForm.key, pluralForm.val]
         
         return output
                     
     # Returns a [key, str] tuple.
-    out: (conversionString) ->
+    stringOut: (conversionString) ->
         ret = ''
         for bit in conversionString.bits
             
@@ -74,7 +74,7 @@ module.exports = MessageFormatFormatter =
             if bit.type is 'plural'
                 innerStrings = []
                 for pluralString in bit.pluralStrings
-                    [innerKey, innerStr] = MessageFormatFormatter.out pluralString
+                    [innerKey, innerStr] = MessageFormatFormatter.stringOut pluralString
                     innerStrings.push innerKey + '{' + innerStr + '}'
                 ret += "{#{bit.pluralKey}, plural, #{innerStrings.join ' '}}"
 

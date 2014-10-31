@@ -14,7 +14,7 @@ module.exports = AndroidXmlFormatter =
 
     # For ease of use, this thing can take either an Android XML `<plurals>` or `<string>` or
     # the xml2js-converted version of the same.
-    in: (str) ->
+    stringIn: (str) ->
         mfconv = require '../messageformat-converter'
         parsed = null
 
@@ -41,7 +41,7 @@ module.exports = AndroidXmlFormatter =
 
         # Case 1: <string>. Just pipe it through MessageFormatFormatter and we're good.
         if type is 'string'
-            output = MessageFormatFormatter.in [key, body._]
+            output = MessageFormatFormatter.stringIn [key, body._]
 
         # Case 2: <plurals>. Create a conversionString with one PluralBit.
         else if type is 'plurals'
@@ -57,7 +57,7 @@ module.exports = AndroidXmlFormatter =
                 pluralAmount = item.$.quantity
                 unless pluralAmount in AndroidXmlFormatter.ALLOWED_PLURAL_KEYS
                     throw new Error "Unknown plural key: #{pluralKey}"
-                itemString = MessageFormatFormatter.in [pluralAmount, item._]
+                itemString = MessageFormatFormatter.stringIn [pluralAmount, item._]
                 pluralBit.addMapping itemString
         
         else
@@ -65,7 +65,7 @@ module.exports = AndroidXmlFormatter =
 
         return output
 
-    out: (conversionString) ->
+    stringOut: (conversionString) ->
         mfconv = require '../messageformat-converter'
         pluralBit = null
         ele = null
@@ -91,11 +91,11 @@ module.exports = AndroidXmlFormatter =
                     throw new Error "Unknown plural key: #{pluralString.key}"
                 newBits = conversionString.bits.slice 0
                 newBits.splice.apply newBits, [pluralIdx, 1].concat  pluralString.bits
-                [key, str] = MessageFormatFormatter.out (new mfconv.ConversionString pluralString.key, newBits)
+                [key, str] = MessageFormatFormatter.stringOut (new mfconv.ConversionString pluralString.key, newBits)
                 ele.ele 'item', {quantity: key}, str
         else
             ele = xmlBuilder.create 'string'
-            [key, str] = MessageFormatFormatter.out conversionString
+            [key, str] = MessageFormatFormatter.stringOut conversionString
             ele.att 'name', key
             ele.txt str
         return ele.toString()
