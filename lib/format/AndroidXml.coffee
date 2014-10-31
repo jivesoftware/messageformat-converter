@@ -43,12 +43,12 @@ module.exports = AndroidXmlFormatter =
         if type is 'string'
             output = MessageFormatFormatter.in [key, body._]
 
-        # Case 2: <plurals>. Create a FormatString with one PluralBit.
+        # Case 2: <plurals>. Create a conversionString with one PluralBit.
         else if type is 'plurals'
             pluralKey = body.$['messageformat:pluralkey']
             unless pluralKey?
                 throw new Error "<plurals> element without a messageformat:pluralkey attribute. I don't know upon which variable I should be switching."
-            output = new mfconv.FormatString key
+            output = new mfconv.ConversionString key
             pluralBit = new mfconv.PluralBit pluralKey
             output.bits.push pluralBit
             unless util.isArray body.item
@@ -65,13 +65,13 @@ module.exports = AndroidXmlFormatter =
 
         return output
 
-    out: (formatString) ->
+    out: (conversionString) ->
         mfconv = require '../messageformat-converter'
         pluralBit = null
         ele = null
 
         # First make sure there is no more than one plural string in here. Android XML can't handle more than that.
-        for bit in formatString.bits
+        for bit in conversionString.bits
             if bit.type is 'plural'
                 if pluralBit?
                     throw new Error "Can't serialize this string as Android XML -- there is more than one plural clause within it"
@@ -79,23 +79,23 @@ module.exports = AndroidXmlFormatter =
 
         if pluralBit?
             ele = xmlBuilder.create 'plurals'
-            ele.att 'name', formatString.key
+            ele.att 'name', conversionString.key
             ele.att 'messageformat:pluralkey', pluralBit.pluralKey
 
-            # Need to turn the FormatString "you have {num, plural, 1{one thing} other{{num} things}}" into
+            # Need to turn the conversionString "you have {num, plural, 1{one thing} other{{num} things}}" into
             # "{num, plural, 1{you have one thing} other{you have {num} things}}"
             outputStrings = []
-            pluralIdx = formatString.bits.indexOf pluralBit
+            pluralIdx = conversionString.bits.indexOf pluralBit
             for pluralString in pluralBit.pluralStrings
                 unless pluralString.key in AndroidXmlFormatter.ALLOWED_PLURAL_KEYS
                     throw new Error "Unknown plural key: #{pluralString.key}"
-                newBits = formatString.bits.slice 0
+                newBits = conversionString.bits.slice 0
                 newBits.splice.apply newBits, [pluralIdx, 1].concat  pluralString.bits
-                [key, str] = MessageFormatFormatter.out (new mfconv.FormatString pluralString.key, newBits)
+                [key, str] = MessageFormatFormatter.out (new mfconv.ConversionString pluralString.key, newBits)
                 ele.ele 'item', {quantity: key}, str
         else
             ele = xmlBuilder.create 'string'
-            [key, str] = MessageFormatFormatter.out formatString
+            [key, str] = MessageFormatFormatter.out conversionString
             ele.att 'name', key
             ele.txt str
         return ele.toString()

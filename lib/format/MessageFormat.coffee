@@ -8,7 +8,7 @@ module.exports = MessageFormatFormatter =
     # takes a [key, str] tuple.
     in: ([key, str]) ->
         mfconv = require '../messageformat-converter'
-        output = new mfconv.FormatString key
+        output = new mfconv.ConversionString key
 
         # We're going to use this function to recurse plurals, so optionally parse the input string
         # into a messageFormat tree.
@@ -58,9 +58,9 @@ module.exports = MessageFormatFormatter =
         return output
                     
     # Returns a [key, str] tuple.
-    out: (formatString) ->
+    out: (conversionString) ->
         ret = ''
-        for bit in formatString.bits
+        for bit in conversionString.bits
             
             # StringBit
             if bit.type is 'string'
@@ -78,5 +78,5 @@ module.exports = MessageFormatFormatter =
                     innerStrings.push innerKey + '{' + innerStr + '}'
                 ret += "{#{bit.pluralKey}, plural, #{innerStrings.join ' '}}"
 
-        return [formatString.key, ret]
+        return [conversionString.key, ret]
 
