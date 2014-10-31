@@ -1,6 +1,6 @@
 
-messageformat-converter
-=======================
+messageformat-converter <img src="https://api.travis-ci.org/ActiveBuilding/messageformat-converter.svg">
+========================================================================================================
 
 Hi! My name is messageformat-converter. I currently conversion of
 [messageformat](https://github.com/SlexAxton/messageformat.js)-formatted strings to and from
