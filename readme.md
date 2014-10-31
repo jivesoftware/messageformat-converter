@@ -1,8 +1,8 @@
 
-messageformat-xml
-=================
+messageformat-converter
+=======================
 
-Hi! My name is messageformat-xml. I handle conversion of
+Hi! My name is messageformat-converter. I currently conversion of
 [messageformat](https://github.com/SlexAxton/messageformat.js)-formatted strings to and from
 [Android XML](http://developer.android.com/guide/topics/resources/string-resource.html) files,
 suitable for integrating with services like [Transifex](https://www.transifex.com/).
