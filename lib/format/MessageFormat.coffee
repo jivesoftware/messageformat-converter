@@ -1,6 +1,7 @@
 
 MessageFormat = require 'messageformat'
 mf = new MessageFormat 'en'
+mfutil = require '../util'
 
 module.exports = MessageFormatFormatter =
 
@@ -80,3 +81,17 @@ module.exports = MessageFormatFormatter =
 
         return [conversionString.key, ret]
 
+    fileIn: (fileStr) ->
+        mfconv = require '../messageformat-converter'
+        obj = JSON.parse fileStr if typeof fileStr is 'string'
+        obj = mfutil.flatten obj
+        conversionStrings = (MessageFormatFormatter.stringIn [key, value] for key, value of obj)
+        return new mfconv.ConversionFile conversionStrings
+
+    fileOut: (conversionFile) ->
+        mfconv = require '../messageformat-converter'
+        ret = {}
+        for conversionString in conversionFile.conversionStrings
+            [key, value] = MessageFormatFormatter.stringOut conversionString
+            ret[key] = value
+        return JSON.stringify mfutil.unflatten ret

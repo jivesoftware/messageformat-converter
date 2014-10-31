@@ -19,6 +19,9 @@ module.exports = mfconv =
     convertString: (startingData) ->
         return new mfconv.StringConverter startingData
 
+    convertFile: (startingData) ->
+        return new mfconv.FileConverter startingData
+
     StringConverter: class
         constructor: (startingData) ->
             this.startingData = startingData
@@ -27,6 +30,15 @@ module.exports = mfconv =
             unless mfconv.formatters[format]
                 throw new Error "Unknown format: #{format}"
             return mfconv.formatters[format].stringIn this.startingData
+
+    FileConverter: class
+        constuctor: (fileData) ->
+            this.fileData = fileData
+
+        from: (format) ->
+            unless mfconv.formatters[format]
+                throw new Error "Unknown format: #{format}"
+            return mfconv.formatters[format].fileIn this.fileData
 
     # In a gross oversimplification of messageFormat, `ConversionString`s are comprised of lists of
     # different kinds of "bits"
@@ -38,7 +50,16 @@ module.exports = mfconv =
         to: (format) ->
             unless mfconv.formatters[format]
                 throw new Error "Unknown format: #{format}"
-            return mfconv.formatters[format].out this
+            return mfconv.formatters[format].stringOut this
+
+    ConversionFile: class
+        constructor: (conversionStrings) ->
+            this.conversionStrings = conversionStrings
+
+        to: (format) ->
+            unless mfconv.formatters[format]
+                throw new Error "Unknown format: #{format}"
+            return mfconv.formatters[format].fileOut this
 
     # Just a boring ol' string.
     StringBit: class
