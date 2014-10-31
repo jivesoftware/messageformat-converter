@@ -6,7 +6,7 @@ expectXmlEqual         = (require '../testutil').expectXmlEqual
 describe 'integration tests', ->
 
     it 'should handle messageFormat --> XML --> messageFormat', ->
-        expected = ['LOGIN.HELPFUL_LINKS', '{links, plural, 1{There is one helpful link for you, {name}!} other{There are {links} helpful links for you, {name}!}}']
+        expected = ['LOGIN.HELPFUL_LINKS', '{links, plural, one{There is one helpful link for you, {name}!} other{There are {links} helpful links for you, {name}!}}']
         actual = MessageFormatFormatter.out AndroidXmlFormatter.in AndroidXmlFormatter.out MessageFormatFormatter.in expected
         expect(actual).toEqual(expected)
 

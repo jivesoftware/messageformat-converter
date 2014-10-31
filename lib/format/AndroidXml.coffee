@@ -10,6 +10,8 @@ MessageFormatFormatter = require './MessageFormat'
 
 module.exports = AndroidXmlFormatter =
 
+    ALLOWED_PLURAL_KEYS: ["zero", "one", "two", "few", "many", "other"]
+
     # For ease of use, this thing can take either an Android XML `<plurals>` or `<string>` or
     # the xml2js-converted version of the same.
     in: (str) ->
@@ -52,7 +54,10 @@ module.exports = AndroidXmlFormatter =
             unless util.isArray body.item
                 body.item = [body.item]
             for item in body.item
-                itemString = MessageFormatFormatter.in [item.$.quantity, item._]
+                pluralAmount = item.$.quantity
+                unless pluralAmount in AndroidXmlFormatter.ALLOWED_PLURAL_KEYS
+                    throw new Error "Unknown plural key: #{pluralKey}"
+                itemString = MessageFormatFormatter.in [pluralAmount, item._]
                 pluralBit.addMapping itemString
         
         else
@@ -82,6 +87,8 @@ module.exports = AndroidXmlFormatter =
             outputStrings = []
             pluralIdx = formatString.bits.indexOf pluralBit
             for pluralString in pluralBit.pluralStrings
+                unless pluralString.key in AndroidXmlFormatter.ALLOWED_PLURAL_KEYS
+                    throw new Error "Unknown plural key: #{pluralString.key}"
                 newBits = formatString.bits.slice 0
                 newBits.splice.apply newBits, [pluralIdx, 1].concat  pluralString.bits
                 [key, str] = MessageFormatFormatter.out (new mfconv.FormatString pluralString.key, newBits)
