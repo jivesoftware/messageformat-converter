@@ -7,31 +7,38 @@ xmlBuilder    = require 'xmlBuilder'
 util          = require 'util'
 MessageFormat = require 'messageformat'
 
-xmlParse = xml2js.Parser().parseString
-mf = new MessageFormat 'en'
+xmlParse      = xml2js.Parser().parseString
+mf            = new MessageFormat 'en'
 
-PLURAL_PLACEHOLDER = {}
+module.exports = mfconv = 
 
-# Maps messageformat quantities to Android quantities
-ANDROID_XML_PLURALS =
-    '1': 'one'
-    '0': 'zero'
-    'other': 'other'
+    formatters:
+        'MESSAGEFORMAT': require './format/MessageFormat'
+        'ANDROID-XML':   require './format/AndroidXml'
 
-# Flip that map to go the other way
-MESSAGEFORMAT_PLURALS = do ->
-    ret = {}
-    ret[v] = k for k, v of ANDROID_XML_PLURALS
-    return ret
+    convertString: (startingData) ->
+        return new mfconv.StringConverter startingData
 
-module.exports = 
+    StringConverter: class
+        constructor: (startingData) ->
+            this.startingData = startingData
 
-    # In a gross oversimplification of messageFormat, `ConversionString`s are comprised of strings
-    # of different types of "bits".
+        from: (format) ->
+            unless mfconv.formatters[format]
+                throw new Error "Unknown format: #{format}"
+            return mfconv.formatters[format].in this.startingData
+
+    # In a gross oversimplification of messageFormat, `ConversionString`s are comprised of lists of
+    # different kinds of "bits"
     ConversionString: class
         constructor: (key, bits = []) ->
             this.key = key
             this.bits = bits
+
+        to: (format) ->
+            unless mfconv.formatters[format]
+                throw new Error "Unknown format: #{format}"
+            return mfconv.formatters[format].out this
 
     # Just a boring ol' string.
     StringBit: class
