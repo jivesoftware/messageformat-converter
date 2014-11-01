@@ -32,7 +32,7 @@ module.exports = mfconv =
             return mfconv.formatters[format].stringIn this.startingData
 
     FileConverter: class
-        constuctor: (fileData) ->
+        constructor: (fileData) ->
             this.fileData = fileData
 
         from: (format) ->
