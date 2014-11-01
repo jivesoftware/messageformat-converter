@@ -26,3 +26,8 @@ describe 'AndroidXmlFormatter', ->
             </plurals>'
         result = AndroidXmlFormatter.stringOut AndroidXmlFormatter.stringIn str
         expectXmlEqual(result, str)
+
+    it 'should handle entire files', ->
+        str = '<resources xmlns:messageformat="">  <string name="DASHBOARD.WELCOME">Welcome to {community}</string>  <plurals messageformat:pluralkey="count" name="DASHBOARD.NOTIFICATIONS">    <item quantity="one">{count} notification</item>    <item quantity="other">{count} notifications</item>  </plurals></resources>'
+        result = AndroidXmlFormatter.fileOut AndroidXmlFormatter.fileIn str
+        expectXmlEqual(result, str)

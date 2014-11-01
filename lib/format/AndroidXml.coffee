@@ -5,7 +5,8 @@
 
 util                   = require 'util'
 xmlBuilder             = require 'xmlBuilder'
-xmlParse               = (require 'xml2js').Parser().parseString
+xml2js                 = require 'xml2js'
+xmlParse               = xml2js.Parser().parseString
 MessageFormatFormatter = require './MessageFormat'
 
 module.exports = AndroidXmlFormatter =
@@ -18,7 +19,7 @@ module.exports = AndroidXmlFormatter =
         mfconv = require '../messageformat-converter'
         parsed = null
 
-        if typeof parsed is 'string'
+        if typeof str is 'object'
             parsed = str
         else
             # looks like a callback but isn't. xml2js runs sync.
@@ -79,8 +80,8 @@ module.exports = AndroidXmlFormatter =
 
         if pluralBit?
             ele = xmlBuilder.create 'plurals'
-            ele.att 'name', conversionString.key
             ele.att 'messageformat:pluralkey', pluralBit.pluralKey
+            ele.att 'name', conversionString.key
 
             # Need to turn the conversionString "you have {num, plural, 1{one thing} other{{num} things}}" into
             # "{num, plural, 1{you have one thing} other{you have {num} things}}"
@@ -99,3 +100,44 @@ module.exports = AndroidXmlFormatter =
             ele.att 'name', key
             ele.txt str
         return ele.toString()
+
+    fileIn: (fileStr) ->
+        mfconv = require '../messageformat-converter'
+        parsed = null
+        xmlParse fileStr, (err, result) ->
+            parsed = result
+
+        if (Object.keys(parsed).length isnt 1) or (not parsed.resources?) or util.isArray parsed.resources
+            throw new Error 'Android XML files need to be a single <resources> block containing <string>s and <plurals>s'
+
+        # Need to do some XML denormalization because of ugly XML --> JS object conversion
+        resources = parsed.resources
+
+        conversionStrings = []
+
+        for type in ['string', 'plurals']
+            if resources[type]? and not util.isArray resources[type]
+                resources[type] = [resources[type]]
+            for str in resources[type]
+                elem = {}
+                elem[type] = str
+                conversionStrings.push AndroidXmlFormatter.stringIn elem 
+        return new mfconv.ConversionFile conversionStrings
+
+    fileOut: (conversionFile) ->
+        mfconv = require '../messageformat-converter'
+        # For the raw XML strings that we're getting from stringOut, it's easier to use xml2js's
+        # builder than a proper xmlBuilder interface.
+        builder = new xml2js.Builder()
+        resources = 
+            $:
+                'xmlns:messageformat': []
+        for conversionString in conversionFile.conversionStrings
+            element = AndroidXmlFormatter.stringOut conversionString
+            xmlParse element, (err, result) ->
+                throw err if err?
+                element = result
+            type = Object.keys(element)[0]
+            resources[type] ?= []
+            resources[type].push element[type]
+        return builder.buildObject {resources: resources}

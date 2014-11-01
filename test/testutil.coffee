@@ -1,4 +1,6 @@
-xmlParse = (require 'xml2js').Parser().parseString
+xml2js = require 'xml2js'
+xmlParse = xml2js.Parser().parseString
+builder = new xml2js.Builder()
 
 module.exports = 
     
@@ -7,7 +9,7 @@ module.exports =
         expected = null
         actual = null
         xmlParse expectedStr, (err, result) ->
-            expected = result
+            expected = builder.buildObject result
         xmlParse actualStr, (err, result) ->
-            actual = result
+            actual = builder.buildObject result
         expect(actual).toEqual(expected)
