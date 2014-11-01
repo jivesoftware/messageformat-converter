@@ -1,5 +1,5 @@
 
-AndroidXmlFormatter = require '../../lib/format/AndroidXml'
+AndroidXmlFormatter = require '../../src/format/AndroidXml'
 expectXmlEqual      = (require '../testutil').expectXmlEqual
 
 describe 'AndroidXmlFormatter', ->

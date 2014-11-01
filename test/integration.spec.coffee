@@ -1,6 +1,6 @@
 
-convertString  = (require '../lib/messageformat-converter').convertString
-convertFile    = (require '../lib/messageformat-converter').convertFile
+convertString  = (require '../src/messageformat-converter').convertString
+convertFile    = (require '../src/messageformat-converter').convertFile
 expectXmlEqual = (require './testutil').expectXmlEqual
 
 describe 'integration tests', ->

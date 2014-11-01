@@ -1,5 +1,5 @@
 
-MessageFormatFormatter = require '../../lib/format/MessageFormat'
+MessageFormatFormatter = require '../../src/format/MessageFormat'
 
 describe 'MessageFormatFormatter', ->
 
