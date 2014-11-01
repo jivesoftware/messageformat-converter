@@ -4,7 +4,9 @@
   "description": "MessageFormat <--> Android XML",
   "main": "lib/messageformat-converter",
   "scripts": {
-    "test": "node_modules/.bin/jasmine-node --coffee ."
+    "test": "node_modules/.bin/jasmine-node --coffee .",
+    "prepublish": "coffee -co lib/ src/*.coffee",
+    "postpublish": "rm -rf lib"
   },
   "keywords": [
     "messageformat",
@@ -18,7 +20,6 @@
     "xmlbuilder": "~2.4.4"
   },
   "devDependencies": {
-    "jasmine-node": "~1.14.5",
-    "coffee-script": "~1.8.0"
+    "jasmine-node": "~1.14.5"
   }
 }
