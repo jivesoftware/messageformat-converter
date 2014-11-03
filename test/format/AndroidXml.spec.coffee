@@ -28,12 +28,12 @@ describe 'AndroidXmlFormatter', ->
         expectXmlEqual(result, str)
 
     it 'should handle entire files', ->
-        str = '<resources xmlns:messageformat="">  <string name="DASHBOARD.WELCOME">Welcome to {community}</string>  <plurals messageformat:pluralkey="count" name="DASHBOARD.NOTIFICATIONS">    <item quantity="one">{count} notification</item>    <item quantity="other">{count} notifications</item>  </plurals></resources>'
+        str = '<resources xmlns:messageformat="https://github.com/ActiveBuilding/messageformat-converter">  <string name="DASHBOARD.WELCOME">Welcome to {community}</string>  <plurals messageformat:pluralkey="count" name="DASHBOARD.NOTIFICATIONS">    <item quantity="one">{count} notification</item>    <item quantity="other">{count} notifications</item>  </plurals></resources>'
         result = AndroidXmlFormatter.fileOut AndroidXmlFormatter.fileIn str
         expectXmlEqual(result, str)
 
     it 'should handle files without plurals', ->
-        str = '<resources xmlns:messageformat=""><string name="DASHBOARD.WELCOME">Arr, welcome to {community}</string></resources>'
+        str = '<resources xmlns:messageformat="https://github.com/ActiveBuilding/messageformat-converter"><string name="DASHBOARD.WELCOME">Arr, welcome to {community}</string></resources>'
         result = AndroidXmlFormatter.fileOut AndroidXmlFormatter.fileIn str
         expectXmlEqual(result, str)
 

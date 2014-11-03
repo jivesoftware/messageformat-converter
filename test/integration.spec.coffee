@@ -16,12 +16,12 @@ describe 'integration tests', ->
 
         it 'should convert files from messageFormat JSON to Android XML', ->
             jsonFile = '{"DASHBOARD":{"WELCOME":"Welcome to {community}","NOTIFICATIONS":"{count, plural, one{{count} notification} other{{count} notifications}}"}}'
-            expected = '<resources xmlns:messageformat="">  <string name="DASHBOARD.WELCOME">Welcome to {community}</string>  <plurals messageformat:pluralkey="count" name="DASHBOARD.NOTIFICATIONS">    <item quantity="one">{count} notification</item>    <item quantity="other">{count} notifications</item>  </plurals></resources>'
+            expected = '<resources xmlns:messageformat="https://github.com/ActiveBuilding/messageformat-converter">  <string name="DASHBOARD.WELCOME">Welcome to {community}</string>  <plurals messageformat:pluralkey="count" name="DASHBOARD.NOTIFICATIONS">    <item quantity="one">{count} notification</item>    <item quantity="other">{count} notifications</item>  </plurals></resources>'
             actual = convertFile(jsonFile).from('MESSAGEFORMAT').to('ANDROID-XML')
             expectXmlEqual(actual, expected)
 
         it 'should convert files from Android XML to messageFormat JSON', ->
             expected = {"DASHBOARD":{"WELCOME":"Welcome to {community}","NOTIFICATIONS":"{count, plural, one{{count} notification} other{{count} notifications}}"}}
-            xml = '<resources xmlns:messageformat="">  <string name="DASHBOARD.WELCOME">Welcome to {community}</string>  <plurals messageformat:pluralkey="count" name="DASHBOARD.NOTIFICATIONS">    <item quantity="one">{count} notification</item>    <item quantity="other">{count} notifications</item>  </plurals></resources>'
+            xml = '<resources xmlns:messageformat="https://github.com/ActiveBuilding/messageformat-converter">  <string name="DASHBOARD.WELCOME">Welcome to {community}</string>  <plurals messageformat:pluralkey="count" name="DASHBOARD.NOTIFICATIONS">    <item quantity="one">{count} notification</item>    <item quantity="other">{count} notifications</item>  </plurals></resources>'
             actual = JSON.parse convertFile(xml).from('ANDROID-XML').to('MESSAGEFORMAT')
             expect(actual).toEqual(expected)

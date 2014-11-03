@@ -132,7 +132,7 @@ module.exports = AndroidXmlFormatter =
         builder = new xml2js.Builder()
         resources = 
             $:
-                'xmlns:messageformat': []
+                'xmlns:messageformat': 'https://github.com/ActiveBuilding/messageformat-converter'
         for conversionString in conversionFile.conversionStrings
             element = AndroidXmlFormatter.stringOut conversionString
             xmlParse element, (err, result) ->
