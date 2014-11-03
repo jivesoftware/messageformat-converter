@@ -4,7 +4,7 @@
 #
 
 util                   = require 'util'
-xmlBuilder             = require 'xmlBuilder'
+xmlBuilder             = require 'xmlbuilder'
 xml2js                 = require 'xml2js'
 xmlParse               = xml2js.Parser().parseString
 MessageFormatFormatter = require './MessageFormat'

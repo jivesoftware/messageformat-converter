@@ -3,7 +3,7 @@
 #
 
 xml2js        = require 'xml2js'
-xmlBuilder    = require 'xmlBuilder'
+xmlBuilder    = require 'xmlbuilder'
 util          = require 'util'
 MessageFormat = require 'messageformat'
 
