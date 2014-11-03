@@ -116,12 +116,13 @@ module.exports = AndroidXmlFormatter =
         conversionStrings = []
 
         for type in ['string', 'plurals']
-            if resources[type]? and not util.isArray resources[type]
-                resources[type] = [resources[type]]
-            for str in resources[type]
-                elem = {}
-                elem[type] = str
-                conversionStrings.push AndroidXmlFormatter.stringIn elem 
+            if resources[type]?
+                unless util.isArray resources[type]
+                    resources[type] = [resources[type]]
+                for str in resources[type]
+                    elem = {}
+                    elem[type] = str
+                    conversionStrings.push AndroidXmlFormatter.stringIn elem 
         return new mfconv.ConversionFile conversionStrings
 
     fileOut: (conversionFile) ->
