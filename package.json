@@ -1,6 +1,6 @@
 {
   "name": "messageformat-converter",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "MessageFormat <--> Android XML",
   "main": "lib/messageformat-converter",
   "scripts": {
