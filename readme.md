@@ -1,5 +1,5 @@
 
-messageformat-converter <img src="https://api.travis-ci.org/ActiveBuilding/messageformat-converter.svg">
+messageformat-converter <img src="https://api.travis-ci.org/jivesoftware/messageformat-converter.svg">
 ========================================================================================================
 
 Hi! My name is messageformat-converter. I currently conversion of

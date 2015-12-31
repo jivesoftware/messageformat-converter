@@ -1,26 +1,35 @@
 {
   "name": "messageformat-converter",
-  "version": "0.0.4",
+  "version": "1.0.0-pre",
   "description": "MessageFormat <--> Android XML",
   "main": "lib/messageformat-converter",
   "scripts": {
-    "test": "node_modules/.bin/jasmine-node --coffee .",
-    "prepublish": "coffee -co lib src",
-    "postpublish": "rm -rf lib"
+    "compile": "babel --ignore 'test/*' -D -d lib/ src",
+    "test": "babel-node ./node_modules/.bin/jasmine-node ."
   },
   "keywords": [
     "messageformat",
-    "Android-XML"
+    "Android-XML",
+    "es6"
   ],
   "author": "Eli Mallon",
+  "contributors": [
+    {
+      "name": "Ghislain Seguin",
+      "email": "ghislain@gmail.com"
+    }
+  ],
   "license": "ISC",
   "dependencies": {
-    "messageformat": "~0.2.1",
-    "xml2js": "~0.4.4",
-    "xmlbuilder": "~2.4.4"
+    "messageformat": "^0.2.2",
+    "util": "^0.10.3",
+    "xml2js": "^0.4.15",
+    "xmlbuilder": "^4.2.0"
   },
   "devDependencies": {
-    "jasmine-node": "~1.14.5",
-    "coffee-script": "~1.8.0"
+    "babel-cli": "^6.3.17",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-1": "^6.3.13",
+    "jasmine-node": "^1.14.5"
   }
 }
