@@ -10,7 +10,8 @@ import MessageFormat from 'messageformat';
 var mfconv = {
     formatters: {
         'MESSAGEFORMAT': require('./format/MessageFormat'),
-        'ANDROID-XML': require('./format/AndroidXml')
+        'ANDROID-XML': require('./format/AndroidXml'),
+        'SMARTLING-ANDROID-XML': require('./format/SmartlingAndroidXml')
     },
 
     convertString: startingData => new mfconv.StringConverter(startingData),

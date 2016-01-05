@@ -36,7 +36,7 @@ describe('AndroidXmlFormatter', () => {
         return expectXmlEqual(result, str);
     });
 
-    return it('should handle files without plurals', () => {
+    it('should handle files without plurals', () => {
         var str = '<resources xmlns:messageformat="https://github.com/jivesoftware/messageformat-converter"><string name="DASHBOARD.WELCOME">Arr, welcome to {community}</string></resources>';
         var result = AndroidXmlFormatter.fileOut(AndroidXmlFormatter.fileIn(str));
         return expectXmlEqual(result, str);

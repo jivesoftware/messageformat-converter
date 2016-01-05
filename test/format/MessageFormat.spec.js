@@ -21,7 +21,7 @@ describe('MessageFormatFormatter', function() {
         return expect(result).toEqual(tuple);
     });
 
-    return it('should handle a file', function() {
+    it('should handle a file', function() {
         var file =
             {'LINKS': 
                 {'COUNT': '{links, plural, 1{There is one helpful link for you, {name}!} other{There are {links} helpful links for you, {name}!}}',
