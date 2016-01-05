@@ -5,6 +5,7 @@
   "main": "lib/messageformat-converter",
   "scripts": {
     "compile": "babel --ignore 'test/*' -D -d lib/ src",
+    "prepublish": "npm run compile",
     "test": "babel-node ./node_modules/.bin/jasmine-node ."
   },
   "keywords": [
